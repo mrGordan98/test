@@ -1,0 +1,85 @@
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+from tkcalendar import DateEntry
+import openpyxl
+from openpyxl import load_workbook
+
+def save_data():
+    data = [
+        combo_collegium.get(), 
+        entry_judge.get(), 
+        entry_assistant.get(), 
+        combo_hall.get(), 
+        calendar.get(), 
+        entry_time.get(), 
+        entry_ip.get(), 
+        additional_ips.get('1.0', tk.END).strip()
+    ]
+    
+    if all(data):
+        try:
+            wb = load_workbook('C:\ОБМЕН\! Общий обменник\Горшенин Д.И\ВКС\Data.xlsx')
+            ws = wb.active
+        except FileNotFoundError:
+            wb = openpyxl.Workbook()
+            ws = wb.active
+            # Запись заголовков
+            headers = ["Коллегия", "Судья", "Помощник", "Зал", "Календарь", "Время", "IP адрес", "Дополнительные IP адреса"]
+            ws.append(headers)
+        
+        ws.append(data)
+        wb.save('C:\ОБМЕН\! Общий обменник\Горшенин Д.И\ВКС\Data.xlsx')
+        
+        clear_fields()
+    else:
+        messagebox.showwarning("Предупреждение", "Пожалуйста, заполните все поля")
+
+def clear_fields():
+    entry_judge.delete(0, tk.END)
+    entry_assistant.delete(0, tk.END)
+    entry_time.delete(0, tk.END)
+    entry_ip.delete(0, tk.END)
+    additional_ips.delete('1.0', tk.END)
+
+root = tk.Tk()
+root.title("Data Entry")
+
+tk.Label(root, text="Коллегия").grid(row=0, column=0, padx=10, pady=5)
+tk.Label(root, text="Судья").grid(row=1, column=0, padx=10, pady=5)
+tk.Label(root, text="Помощник").grid(row=2, column=0, padx=10, pady=5)
+tk.Label(root, text="Зал").grid(row=3, column=0, padx=10, pady=5)
+tk.Label(root, text="Календарь").grid(row=4, column=0, padx=10, pady=5)
+tk.Label(root, text="Время").grid(row=5, column=0, padx=10, pady=5)
+tk.Label(root, text="IP адрес").grid(row=6, column=0, padx=10, pady=5)
+tk.Label(root, text="Добавить IP адрес").grid(row=7, column=0, padx=10, pady=5)
+
+combo_collegium = ttk.Combobox(root, values=["Уголовная", "Гражданская", "Административная"])
+combo_collegium.grid(row=0, column=1, padx=10, pady=5)
+combo_collegium.current(0)
+
+entry_judge = tk.Entry(root)
+entry_judge.grid(row=1, column=1, padx=10, pady=5)
+
+entry_assistant = tk.Entry(root)
+entry_assistant.grid(row=2, column=1, padx=10, pady=5)
+
+combo_hall = ttk.Combobox(root, values=["Зал 1", "Зал 2 (инкубатор)", "Зал 3 (408)", "Зал 4", "Зал 5", "Зал 7", "Зал 8"])
+combo_hall.grid(row=3, column=1, padx=10, pady=5)
+combo_hall.current(0)
+
+calendar = DateEntry(root, width=12, background='darkblue', foreground='white', borderwidth=2)
+calendar.grid(row=4, column=1, padx=10, pady=5)
+
+entry_time = tk.Entry(root)
+entry_time.grid(row=5, column=1, padx=10, pady=5)
+
+entry_ip = tk.Entry(root)
+entry_ip.grid(row=6, column=1, padx=10, pady=5)
+
+additional_ips = tk.Text(root, height=4, width=20)
+additional_ips.grid(row=7, column=1, padx=10, pady=5)
+
+tk.Button(root, text='Отправить', command=save_data).grid(row=8, column=0, columnspan=2, padx=10, pady=10)
+
+root.mainloop()
